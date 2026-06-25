@@ -122,18 +122,64 @@ def after(date: str) -> str:
 
 def usage():
     "Print a usage message to the user"
-    ...
+    print("Usage: assignment1.py YYYY-MM-DD YYYY-MM-DD")
 
 
 def valid_date(date: str) -> bool:
     "check validity of date and return True if valid"
-    ...
+    parts = date.split('-')
+    if len(parts) != 3:
+        return False
+
+    year, month, day = parts
+    if len(year) != 4 or len(month) != 2 or len(day) != 2:
+        return False
+
+    if not year.isdigit() or not month.isdigit() or not day.isdigit():
+        return False
+
+    year = int(year)
+    month = int(month)
+    day = int(day)
+
+    if month < 1 or month > 12:
+        return False
+
+    if day < 1 or day > mon_max(month, year):
+        return False
+
+    return True
 
 
 def day_count(start_date: str, stop_date: str) -> int:
     "Loops through range of dates, and returns number of weekend days"
-    ...
+    current = start_date
+    weekends = 0
+
+    while current <= stop_date:
+        year, month, day = current.split('-')
+        weekday = day_of_week(int(year), int(month), int(day))
+        if weekday == 'sat' or weekday == 'sun':
+            weekends += 1
+        current = after(current)
+
+    return weekends
 
 
 if __name__ == "__main__":
-    ...
+    if len(sys.argv) != 3:
+        usage()
+        sys.exit()
+
+    date1 = sys.argv[1]
+    date2 = sys.argv[2]
+
+    if not valid_date(date1) or not valid_date(date2):
+        usage()
+        sys.exit()
+
+    start_date, stop_date = sorted([date1, date2])
+    weekends = day_count(start_date, stop_date)
+
+    print(f"The period between {start_date} and {stop_date} includes {weekends} weekend days.")
+
